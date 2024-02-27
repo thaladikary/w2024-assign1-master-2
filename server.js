@@ -11,10 +11,7 @@ const {
   checkValidStartEndRef,
 } = require("./errorMessages.js");
 
-const supabase = supa.createClient(
-  process.env.supaUrl,
-  process.env.supaAnonKey
-);
+const supabase = supa.createClient(process.env.URL, process.env.KEY);
 
 /*
     Returns all the seasons
@@ -49,16 +46,12 @@ app.get("/api/circuits/:ref", async (req, res) => {
 */
 
 app.get("/api/circuits/season/:year", async (req, res) => {
-  if (typeof req.params.year === "string") {
-    res.send({ message: "Invalid year provided" });
-  } else {
-    const { data, error } = await supabase
-      .from("races")
-      .select("circuits(*), round")
-      .eq("year", req.params.year)
-      .order("round", { ascending: true });
-    checkValidYear(data, res);
-  }
+  const { data, error } = await supabase
+    .from("races")
+    .select("circuits(*), round")
+    .eq("year", req.params.year)
+    .order("round", { ascending: true });
+  checkValidYear(data, res);
 });
 
 /*
@@ -112,15 +105,11 @@ app.get("/api/drivers/:ref", async (req, res) => {
 */
 
 app.get("/api/drivers/search/:substring", async (req, res) => {
-  if (typeof req.params.substring === "number") {
-    res.send({ message: "Invalid substring provided" });
-  } else {
-    const { data, error } = await supabase
-      .from("drivers")
-      .select()
-      .ilike("surname", `${req.params.substring}%`);
-    checkValidSubstring(data, res);
-  }
+  const { data, error } = await supabase
+    .from("drivers")
+    .select()
+    .ilike("surname", `${req.params.substring}%`);
+  checkValidSubstring(data, res);
 });
 
 /*
@@ -128,32 +117,24 @@ app.get("/api/drivers/search/:substring", async (req, res) => {
     /api/drivers/race/1106
 */
 app.get("/api/drivers/race/:raceId", async (req, res) => {
-  if (typeof req.params.raceId === "string") {
-    res.send({ message: "Invalid raceID specified" });
-  } else {
-    const { data, error } = await supabase
-      .from("results")
-      .select(`drivers (*)`)
-      .eq("raceId", req.params.raceId);
-    checkValidRaceID(data, res);
-  }
+  const { data, error } = await supabase
+    .from("results")
+    .select(`drivers (*)`)
+    .eq("raceId", req.params.raceId);
+  checkValidRaceID(data, res);
 });
 /*
     Returns just the specified race
 */
 
 app.get("/api/races/:raceId", async (req, res) => {
-  if (typeof req.params.raceId === "string") {
-    res.send({ message: "Invalid raceID specified" });
-  } else {
-    const { data, error } = await supabase
-      .from("races")
-      .select(
-        `raceId, year, round, date, time, url, fp1_date, fp1_time, fp2_date, fp2_time, fp3_date, fp3_time, quali_date, quali_time, sprint_date, sprint_time, circuits (name, location, country)`
-      )
-      .eq("raceId", req.params.raceId);
-    checkValidRaceID(data, res);
-  }
+  const { data, error } = await supabase
+    .from("races")
+    .select(
+      `raceId, year, round, date, time, url, fp1_date, fp1_time, fp2_date, fp2_time, fp3_date, fp3_time, quali_date, quali_time, sprint_date, sprint_time, circuits (name, location, country)`
+    )
+    .eq("raceId", req.params.raceId);
+  checkValidRaceID(data, res);
 });
 
 /*
@@ -161,16 +142,12 @@ app.get("/api/races/:raceId", async (req, res) => {
 */
 
 app.get("/api/races/season/:year", async (req, res) => {
-  if (typeof req.params.year === "string") {
-    res.send({ message: "Invalid year specified" });
-  } else {
-    const { data, error } = await supabase
-      .from("races")
-      .select()
-      .eq("year", req.params.year)
-      .order("round");
-    checkValidYear(data, res);
-  }
+  const { data, error } = await supabase
+    .from("races")
+    .select()
+    .eq("year", req.params.year)
+    .order("round");
+  checkValidYear(data, res);
 });
 
 /*
@@ -179,19 +156,12 @@ app.get("/api/races/season/:year", async (req, res) => {
 */
 
 app.get("/api/races/season/:year/:round", async (req, res) => {
-  if (
-    typeof req.params.year === "string" ||
-    typeof req.params.round === "string"
-  ) {
-    res.send({ message: "Invalid year or round specified" });
-  } else {
-    const { data, error } = await supabase
-      .from("races")
-      .select()
-      .eq("year", req.params.year)
-      .eq("round", req.params.round);
-    checkValidYearRound(data, res);
-  }
+  const { data, error } = await supabase
+    .from("races")
+    .select()
+    .eq("year", req.params.year)
+    .eq("round", req.params.round);
+  checkValidYearRound(data, res);
 });
 
 /*
@@ -303,20 +273,17 @@ app.get("/api/standings/:raceId/drivers", async (req, res) => {
 */
 
 app.get("/api/standings/:raceId/constructors", async (req, res) => {
-  if (typeof req.params.raceId === "string") {
-    res.send({ message: "Invalid raceID specified" });
-  } else {
-    const { data, error } = await supabase
-      .from("constructorStandings")
-      .select(
-        "constructorStandingsId, raceId, points, position, positionText, wins, constructors(*)"
-      )
-      .eq("raceId", req.params.raceId)
-      .order("position");
-    checkValidRaceID(data, res);
-  }
+  const { data, error } = await supabase
+    .from("constructorStandings")
+    .select(
+      "constructorStandingsId, raceId, points, position, positionText, wins, constructors(*)"
+    )
+    .eq("raceId", req.params.raceId)
+    .order("position");
+  if (isNaN(req.params.raceId)) res.send({ error: "Invalid raceId specified" });
+  checkValidRaceID(data, res);
 });
 
-app.listen(8080, () => {
-  console.log("listening on port 8080");
+app.listen(process.env.PORT, () => {
+  console.log("Node server started");
 });
