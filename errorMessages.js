@@ -1,10 +1,10 @@
 const errorMessages = {
-  ref: { message: "Invalid ref specified" },
-  year: { message: "Invalid year specified" },
-  substring: { message: "Invalid substring specified" },
-  raceId: { message: "Invalid raceId specified" },
-  yearRound: { message: "Invalid year or round specified" },
-  startEndYearRef: { message: "Invalid year start or end or ref specified" },
+  ref: { error: "Invalid ref specified" },
+  year: { error: "Invalid year specified" },
+  substring: { error: "Invalid substring specified" },
+  raceId: { error: "Invalid raceId specified" },
+  yearRound: { error: "Invalid year or round specified" },
+  startEndYearRef: { error: "Invalid year start or end or ref specified" },
 };
 
 function checkValidity(data, condition, errorMessage, res) {
